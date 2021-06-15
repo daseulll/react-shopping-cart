@@ -24,6 +24,10 @@ const getProducts = async (): Promise<CartItemType[]> =>
 await (await fetch('https://fakestoreapi.com/products')).json();
 
 const App = () => {
+  // cart를 열었는지 닫았는지 bool 상태
+  const [cartOpen, setCartOpen] = useState(false);
+  // cart에 실제로 담겨있는 items array
+  const [cartItems, setCartItems] = useState([] as CartItemType[])
   const { data, isLoading, error } = useQuery<CartItemType[]>('products', getProducts);
   console.log(data);
 
