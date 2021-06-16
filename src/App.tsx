@@ -8,8 +8,8 @@ import Grid from '@material-ui/core/Grid';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import Badge from '@material-ui/core/Badge'
 //Styles
-import {Wrapper} from './App.styles';
-import { LinkedIn } from '@material-ui/icons';
+import { Wrapper, StyledButton } from './App.styles';
+
 //types
 export type CartItemType = {
   id: number;
@@ -21,7 +21,7 @@ export type CartItemType = {
   amount: number;
 }
 const getProducts = async (): Promise<CartItemType[]> =>
-await (await fetch('https://fakestoreapi.com/products')).json();
+  await (await fetch('https://fakestoreapi.com/products')).json();
 
 const App = () => {
   // cart를 열었는지 닫았는지 bool 상태
@@ -31,7 +31,8 @@ const App = () => {
   const { data, isLoading, error } = useQuery<CartItemType[]>('products', getProducts);
   console.log(data);
 
-  const getTotalItems = () => null;
+  const getTotalItems = (items: CartItemType[]) =>
+    items.reduce((ack: number, item) => ack + item.amount, 0);
   const handleAddToCart = (clickedItem: CartItemType) => null;
   const handleRemoveFromCart = () => null;
 
@@ -40,6 +41,15 @@ const App = () => {
 
   return (
     <Wrapper>
+      <Drawer anchor='right' open={cartOpen} onClose={() => setCartOpen(false)}>
+        Cart goes here...
+      </Drawer>
+      <StyledButton onClick={() => setCartOpen(true)}>
+        <Badge badgeContent={getTotalItems(cartItems)} color='error'>
+          <AddShoppingCartIcon />
+        </Badge>
+      </StyledButton>
+
       <Grid container spacing={3}>
         {data?.map(item => (
           <Grid item key={item.id} xs={12} sm={4}>
@@ -48,7 +58,7 @@ const App = () => {
 
         ))}
       </Grid>
-    </Wrapper>
+    </Wrapper >
   )
 }
 
